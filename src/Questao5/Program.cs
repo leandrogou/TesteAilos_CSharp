@@ -1,3 +1,4 @@
+using IdempotentAPI.Cache.DistributedCache.Extensions.DependencyInjection;
 using MediatR;
 using Questao5.Infrastructure.Sqlite;
 using System.Reflection;
@@ -15,7 +16,33 @@ builder.Services.AddSingleton<IDatabaseBootstrap, DatabaseBootstrap>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.ResolveConflictingActions(apiDescription => apiDescription.First());
+    c.IgnoreObsoleteActions();
+    c.IgnoreObsoleteProperties();
+    c.CustomSchemaIds(type => type.FullName);
+
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "DocumentacaoAPIBanco.API",
+        Version = "v1",
+        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        {
+            Name = "Leandro Gouvea",
+            Email = "leandro.gou@live.com",
+            Url = new Uri("https://github.com.br")
+        }
+    });
+
+    var xmlFile = "Questao5.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
+});
+
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddIdempotentAPIUsingDistributedCache();
 
 var app = builder.Build();
 
