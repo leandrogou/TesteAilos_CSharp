@@ -44,7 +44,7 @@ namespace Questao5.Infrastructure.Services.Controllers
         [Route("SaldoConta/{conta}")]
         public IActionResult RetornarSaldoConta(int conta)
         {
-            _mediator.Send(conta);
+            var retorno = _banco.RetornarSaldo(conta);
             if(conta== 0)
             return Ok();
             else return BadRequest();

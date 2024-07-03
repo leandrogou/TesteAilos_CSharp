@@ -17,11 +17,19 @@ namespace Questao5.Infrastructure.Database.CommandStore.Requests
         }
         public Task<RequisicaoConta> RetornarSaldo(int numeroConta)
         {
-            using var connection = new SqliteConnection(databaseConfig.Name);
+            try
+            {
+                string sql = string.Format("SELECT a.idcontacorrente as idRequisicao, a.numero as idContacorrente,IFNULL(sum(b.valor),0) as valorMovimentar,CURRENT_TIMESTAMP as Resposta FROM contacorrente a" +
+                    " LEFT JOIN movimento b ON (a.numero = b.idcontacorrente) WHERE a.numero = {0} GROUP BY a.numero;", numeroConta);
+                using var connection = new SqliteConnection(databaseConfig.Name);
 
-            RequisicaoConta retorna = connection.Query<RequisicaoConta>(string.Format("SELECT * FROM contacorrente WHERE numero = {0};",numeroConta)).FirstOrDefault();
+                RequisicaoConta retorna = connection.Query<RequisicaoConta>(sql).FirstOrDefault();
 
-            return Task.FromResult(retorna);
+                return Task.FromResult(retorna);
+            }catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public Task Save(Movimento movimento)
