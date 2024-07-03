@@ -1,6 +1,8 @@
-﻿namespace Questao5.Domain.Entities
+﻿using MediatR;
+
+namespace Questao5.Domain.Entities
 {
-    public class ContaCorrente
+    public class ContaCorrente : IRequest<string>
     {
         public ContaCorrente(Guid idContaCorrente, int numero, string nome, int ativo)
         {

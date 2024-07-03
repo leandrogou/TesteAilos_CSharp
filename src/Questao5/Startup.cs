@@ -13,6 +13,7 @@ namespace Questao5
 
         public void ConfigureService(IServiceCollection services)
         {
+
             services.AddSingleton<IAPIBanco, APIBanco>();
             services.AddMediatR(typeof(Startup));
         }

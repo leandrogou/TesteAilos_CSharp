@@ -1,6 +1,8 @@
-﻿namespace Questao5.Domain.Entities
+﻿using MediatR;
+
+namespace Questao5.Domain.Entities
 {
-    public class IdEmpotencia
+    public class IdEmpotencia 
     {
         public Guid chave_IdEmpotencia { get; private set; }
         public string Requisicao { get; private set; }

@@ -1,6 +1,8 @@
 ﻿using IdempotentAPI.Filters;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Questao5.Domain.Entities;
+using Questao5.Infrastructure.Database.CommandStore.Requests;
 
 namespace Questao5.Infrastructure.Services.Controllers
 {
@@ -8,10 +10,17 @@ namespace Questao5.Infrastructure.Services.Controllers
     [Route("/api/[controller]/")]
     [Consumes("application/json")]
     [Produces("application/json")]
-    [Idempotent(Enabled = true)]
+    //[Idempotent(Enabled = true)]
     public class APIBancoController : ControllerBase
     {
-        public APIBancoController() { }
+        private readonly IMediator _mediator;
+        private readonly IAPIBanco _banco;
+
+        public APIBancoController(IMediator mediator, IAPIBanco banco)
+        {
+            _mediator = mediator;
+            _banco = banco;
+        }
 
         /// <summary>
         /// Movimenta o saldo da conta
@@ -20,8 +29,9 @@ namespace Questao5.Infrastructure.Services.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("MovimentaConta")]
-        public IActionResult MovimentarConta(RequisicaoConta conta)
+        public IActionResult MovimentarConta(CustomerCreateMovimentoCommand conta)
         {
+            _mediator.Send(conta);
             return Ok();
         }
 
@@ -31,9 +41,10 @@ namespace Questao5.Infrastructure.Services.Controllers
         /// <param name="conta"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("SaldoConta")]
+        [Route("SaldoConta/{conta}")]
         public IActionResult RetornarSaldoConta(int conta)
         {
+            _mediator.Send(conta);
             if(conta== 0)
             return Ok();
             else return BadRequest();
